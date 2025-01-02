@@ -7,7 +7,7 @@ import { PostsService } from "./posts.service";
 export class PostsFacade {
   private postsService = inject(PostsService);
 
-  private dataPosts = this.postsService._dataPosts;
+  private dataPosts = this.postsService.getPosts();
 
   get DataPosts() {
     return this.dataPosts;
