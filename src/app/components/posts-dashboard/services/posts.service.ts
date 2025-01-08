@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Posts } from '../models/posts';
 import { environment } from '../../../../environments/environment.development';
@@ -11,15 +11,19 @@ import { PostsData } from '../models/posts-data';
 export class PostsService {
   private httpClient = inject(HttpClient);
 
-  private dataPosts = signal<Posts[]>([]);
-  readonly _dataPosts = this.dataPosts.asReadonly;
+  private dataPosts = signal<Posts[]>([
+    {
+      userId: undefined,
+      id: undefined,
+      title: undefined,
+      body: undefined
+    }
+  ]);
 
-  constructor() {
-    this.getPosts();
-  }
+  postsData = computed(() => this.dataPosts());
 
   getPosts() {
-    const request = this.httpClient.get<Posts[]>(environment.apiUrl + 'posts').pipe(
+    this.httpClient.get<Posts[]>(environment.apiUrl + 'posts').pipe(
       first(),
       take(1),
       switchMap((data) => data.map((posts) => this.dataPosts.set([
@@ -31,7 +35,5 @@ export class PostsService {
         }
       ])))
     );
-
-    return request;
   }
 }

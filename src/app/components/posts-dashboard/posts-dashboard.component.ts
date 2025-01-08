@@ -1,6 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { PostsFacade } from './services/posts.facade';
+import { of } from 'rxjs';
+import { Posts } from './models/posts';
 
 @Component({
   selector: 'app-posts-dashboard',
@@ -13,9 +15,11 @@ import { PostsFacade } from './services/posts.facade';
 export class PostsDashboardComponent implements OnInit {
   private postsFacade = inject(PostsFacade);
 
-  private dataPosts = this.postsFacade.DataPosts;
+  dataPosts = this.postsFacade.dataPosts;
+
+  dataPostsList = new Array<Posts>();
 
   ngOnInit(): void {
-      this.dataPosts;
+
   }
 }
