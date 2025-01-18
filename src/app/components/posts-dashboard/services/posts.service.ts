@@ -2,7 +2,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Posts } from '../models/posts';
 import { environment } from '../../../../environments/environment.development';
-import { first, switchMap, take } from 'rxjs';
+import { first, map, Subject, switchMap, take } from 'rxjs';
 import { PostsData } from '../models/posts-data';
 
 @Injectable({
@@ -11,29 +11,35 @@ import { PostsData } from '../models/posts-data';
 export class PostsService {
   private httpClient = inject(HttpClient);
 
-  private dataPosts = signal<Posts[]>([
+  private postDataState = signal<Posts[]>([
     {
-      userId: undefined,
       id: undefined,
+      userId: undefined,
       title: undefined,
       body: undefined
     }
   ]);
 
-  postsData = computed(() => this.dataPosts());
+  title = computed(() => this.postDataState().map(data => data.title));
+  body = computed(() => this.postDataState().map(data => data.body));
 
-  getPosts() {
-    this.httpClient.get<Posts[]>(environment.apiUrl + 'posts').pipe(
+  private postDataSubjectList = new Subject<Posts[]>();
+
+  onGetDataPosts() {
+    this.httpClient.post<Posts[]>(environment.apiUrl + 'posts', 1).pipe(
       first(),
       take(1),
-      switchMap((data) => data.map((posts) => this.dataPosts.set([
-        {
-          userId: posts.userId,
-          id: posts.id,
-          title: posts.title,
-          body: posts.body
-        }
-      ])))
+      switchMap(async (data) => this.postDataSubjectList.next(data))
     );
+  }
+
+  onSetDataForSelectors() {
+    this.postDataSubjectList.pipe(
+      map((data) => this.postDataState.set(data))
+    );
+  }
+
+  onSetDataPostForEachState(dataPosts: Array<Posts>): void {
+    this.postDataState.set(dataPosts);
   }
 }
