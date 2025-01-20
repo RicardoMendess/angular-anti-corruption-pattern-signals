@@ -1,8 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { PostsFacade } from './services/posts.facade';
-import { of } from 'rxjs';
-import { Posts } from './models/posts';
 import { PostsService } from './services/posts.service';
 
 @Component({
@@ -20,13 +18,11 @@ import { PostsService } from './services/posts.service';
 export class PostsDashboardComponent implements OnInit {
   private postsFacade = inject(PostsFacade);
 
+  onSubmit() {
+
+  }
+
   ngOnInit(): void {
-    this.postsFacade.dataPostsBySelectorsSignal$.subscribe(
-      (data) => {
-        if(data != undefined) {
-          console.log("Data")
-        }
-      }
-    )
+
   }
 }

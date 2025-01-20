@@ -1,4 +1,4 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
 import { PostsService } from "./posts.service";
 import { BehaviorSubject } from "rxjs";
 import { PostsData } from "../models/posts-data";
@@ -9,19 +9,25 @@ import { PostsData } from "../models/posts-data";
 export class PostsFacade {
   private postsService = inject(PostsService);
 
-  private dataPostsBySelectorsSignal = new BehaviorSubject<PostsData | null>(null);
-  readonly dataPostsBySelectorsSignal$ = this.dataPostsBySelectorsSignal.asObservable();
+  private dataPostUniq = signal<PostsData>({
+    title: undefined,
+    body: undefined
+  });
 
-  onGetDataSelector() {
-    const titleSignal = this.postsService.title.toString();
-    const bodySignal = this.postsService.body.toString();
+  readonly dataPostUniq$ = this.dataPostUniq;
 
-    if(titleSignal != undefined && bodySignal != undefined) {
-      this.dataPostsBySelectorsSignal.next({
-        title: titleSignal,
-        body: bodySignal,
-      })
-    }
+  onSetDataPostOnly(id: number): void {
+    this.postsService.onPostData(id);
   }
 
+  onGetDataPostUniq() {
+    return this.postsService.dataPostsSubject$.subscribe(
+      (onlyData) => {
+        this.dataPostUniq.set({
+          title: onlyData.title,
+          body: onlyData.body
+        });
+      }
+    )
+  }
 }
