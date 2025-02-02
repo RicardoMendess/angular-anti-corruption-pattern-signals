@@ -6,8 +6,16 @@
       <mat-icon>leak_remove</mat-icon>
   </header>
   <main>
-    <button (click)="onSubmit()">
-      <span>Exibir dado</span>
+    <button mat-button (click)="onSubmit()">
+      Ver post
     </button>
+    <mat-card appearance="outlined">
+      <mat-card-title>
+        {{ titlePost() }}
+      </mat-card-title>
+      <mat-card-content>
+        {{ bodyPost() }}
+      </mat-card-content>
+    </mat-card>
   </main>
 </section>

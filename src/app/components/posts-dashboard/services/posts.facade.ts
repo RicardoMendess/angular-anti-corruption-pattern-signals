@@ -9,24 +9,20 @@ import { PostsData } from "../models/posts-data";
 export class PostsFacade {
   private postsService = inject(PostsService);
 
-  private dataPostUniq = signal<PostsData>({
+  public dataPartialPost = signal<PostsData>({
     title: undefined,
     body: undefined
   });
 
-  readonly dataPostUniq$ = this.dataPostUniq;
-
-  onSetDataPostOnly(id: number): void {
-    this.postsService.onPostData(id);
-  }
-
-  onGetDataPostUniq() {
-    return this.postsService.dataPostsSubject$.subscribe(
-      (onlyData) => {
-        this.dataPostUniq.set({
-          title: onlyData.title,
-          body: onlyData.body
-        });
+  public onGetPartialDataPost() {
+    this.postsService.dataPostsSubject$.subscribe(
+      (data) => {
+        if(data != null) {
+          this.dataPartialPost.set({
+            title: data.title,
+            body: data.body
+          });
+        }
       }
     )
   }

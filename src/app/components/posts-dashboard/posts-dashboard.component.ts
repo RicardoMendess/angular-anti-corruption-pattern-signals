@@ -1,28 +1,33 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { PostsFacade } from './services/posts.facade';
 import { PostsService } from './services/posts.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+
 
 @Component({
   selector: 'app-posts-dashboard',
   imports: [
-    MatIconModule
+    MatIconModule,
+    MatCardModule
   ],
   templateUrl: './posts-dashboard.component.html',
   styleUrl: './posts-dashboard.component.css',
   providers: [
     PostsFacade,
-    PostsService
+    PostsService,
+    MatButtonModule
   ]
 })
-export class PostsDashboardComponent implements OnInit {
+export class PostsDashboardComponent {
   private postsFacade = inject(PostsFacade);
+  private postsService = inject(PostsService);
 
-  onSubmit() {
+  public titlePost = computed(() => this.postsFacade.dataPartialPost().title);
+  public bodyPost = computed(() => this.postsFacade.dataPartialPost().body);
 
-  }
-
-  ngOnInit(): void {
-
+  onSubmit(): void {
+    this.postsService.onPostData();
   }
 }
