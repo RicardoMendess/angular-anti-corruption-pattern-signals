@@ -15,7 +15,7 @@ export class PostsFacade {
   });
 
   public onGetPartialDataPost() {
-    this.postsService.dataPostsSubject$.subscribe(
+    this.postsService.onPostData().subscribe(
       (data) => {
         if(data != null) {
           this.dataPartialPost.set({
